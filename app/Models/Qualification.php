@@ -5,12 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Workplace extends Model
+class Qualification extends Model
 {
     use HasFactory;
 
-    public function plannings(){
-
-        return $this->hasMany(Planning::class,'idWorkplaces');
+    public function users(){
+        return $this->hasMany(User::class, 'idQualication');
     }
 }

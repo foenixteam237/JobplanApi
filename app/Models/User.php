@@ -28,7 +28,8 @@ class User extends Authenticatable
         'sex',
         'idRole',
         'idNationality',
-        'birthPlace'
+        'birthPlace',
+        'idQualification'
     ];
 
     /**
@@ -56,7 +57,9 @@ class User extends Authenticatable
 
         return $this->hasMany(Program::class, 'user_id');
     }
-
+    public function qualification(){
+        return $this->belongsTo(Qualification::class,'idQualification');
+    }
     public function role()
     {
         return $this->belongsTo(Role::class, 'idRole');

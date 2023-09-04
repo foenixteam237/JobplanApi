@@ -21,10 +21,10 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     Route::apiResource("users", UserController::class);
 
-    Route::post('/users', [UserController::class, 'store']);
     Route::get('users/{id}', [UserController::class, 'show']);
 });
 
+Route::post('/users', [UserController::class, 'store']);
 Route::post('login',[UserController::class,'login'])->name('login');
 //Route::apiResource('/users', UserController::class);
 Route::apiResource('/plannings', PlanningController::class);

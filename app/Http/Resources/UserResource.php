@@ -23,6 +23,7 @@ class UserResource extends JsonResource
             "password" => $this->password,
             "marialStatus" => $this->marialStatus,
             "sex" => $this->sex,
+            "qualification" => new QualicationResource($this->qualification),
             "userRole" => new RoleResource($this->role),
             "nationality" => new NationalityResource($this->nationality),
             "created_at" => $this->created_at

@@ -19,7 +19,7 @@ class UserController extends Controller
     public function index()
     {
 
-        $user = User::with(['role','nationality'])->get();
+        $user = User::with(['role','nationality','qualification'])->get();
 
        return UserResource::collection($user);
        //return response()->json(['users'=>$user]);
@@ -75,7 +75,8 @@ class UserController extends Controller
                 "recruitmentDate" => $request->recruitmentDate,
                 "sex" => $request->sex,
                 "idRole" => $request->role,
-                "idNationality" => $request->nationality
+                "idNationality" => $request->nationality,
+                "idQualification" => $request->qualification
             ]
         );
 
@@ -131,6 +132,7 @@ class UserValidator {
             "sex" => 'required|in:M,F',
             "role" => 'required',
             "nationality" => 'required',
+            'qualification' => 'required'
         ];
         $validator = Validator::make($data, $rules);
         return $validator->passes();

@@ -20,6 +20,10 @@ class Planning extends Model
         return $this->hasMany(Program::class, 'idPlanning');
     }
 
+    public function workplaces(){
+
+        return $this->belongsTo(Workplace::class,'idWorkplace');
+    }
     public function users(){
         return $this->belongsTo(User::class, 'by');
     }
