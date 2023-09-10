@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\ProgramResource;
 use App\Models\Program;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class ProgramController extends Controller
 {
@@ -22,8 +23,8 @@ class ProgramController extends Controller
             'days',
             'hours'])->get();
 
-       /* return response()->json([
-            'users' => $program
+        /*return response()->json([
+            'users' => $program->desc
         ]);*/
         return ProgramResource::collection($program);
     }
@@ -34,6 +35,24 @@ class ProgramController extends Controller
     public function store(Request $request)
     {
         //
+        if (!ProgramValidator::validate($request->all())) {
+            return response()->json([
+                'status' => false,
+                'message' => "Données invalides",
+            ], 400);
+        }
+
+        $program =Program::create([
+            'user_id' => $request->user_id,
+            'idPlanning' => $request->idPlanning,
+            'idDay' => $request->idDay,
+            'idHour' => $request->idHour
+        ]); 
+
+        return response()->json([
+            'status' => 'Programme créé avec succès',
+            'validé' => $program
+        ]);
     }
 
     /**
@@ -58,5 +77,21 @@ class ProgramController extends Controller
     public function destroy(Program $program)
     {
         //
+    }
+}
+
+
+class ProgramValidator
+{
+    public static function validate(array $data)
+    {
+        $rules = [
+            'user_id' => 'required|int',
+            'idPlanning' => 'required|int',
+            'idDay' => 'required|int',
+            'idHour' => 'required|int'
+        ];
+        $validator = Validator::make($data, $rules);
+        return $validator->passes();
     }
 }

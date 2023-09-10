@@ -13,7 +13,9 @@ class Planning extends Model
         'status',
         'week',
         'idMonth',
-        'idUser'
+        'by',
+        'year',
+        'idWorkplaces'
     ];
 
     public function programs(){

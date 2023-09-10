@@ -8,4 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class AffectTo extends Model
 {
     use HasFactory;
+    protected $fillable = [
+        'idWorkplace',
+        'idUser'
+    ];
+
+    public function users(){
+
+    }
 }

@@ -15,11 +15,11 @@ class PlanningResource extends JsonResource
     public function toArray(Request $request): array
     {
         $userResource = new UserResource($this->users);
-        $monthResource = new MonthResource($this->months);
+        $monthResource = $this->months->desc;
         $programResources = ProgramResource::collection($this->programs);
 
         return [
-            "createdBy" => $userResource,
+            "createdBy" => $userResource->name,
             "year" => $this->year,
             "month" => $monthResource,
             "week" => $this->week,

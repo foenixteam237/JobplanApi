@@ -12,9 +12,9 @@ class UserResource extends JsonResource
      *
      * @return array<string, mixed>
      */
-    public function toArray(Request $request): array
+    public function toArray(Request $request)
     {
-        return [
+        $data =  [
             "name" => $this->name,
             "fisrtName" => $this->fisrtName,
             "birthDay" => $this->birthDate,
@@ -23,10 +23,14 @@ class UserResource extends JsonResource
             "password" => $this->password,
             "marialStatus" => $this->marialStatus,
             "sex" => $this->sex,
-            "qualification" => new QualicationResource($this->qualification),
-            "userRole" => new RoleResource($this->role),
-            "nationality" => new NationalityResource($this->nationality),
+            "qualification" => $this->qualification->name,
+            "userRole" => $this->role->roleName,
+            "nationality" => $this->nationality->nationalite,
+            "poste" =>  UserWorkplaceResource::collection($this->workplaces),
             "created_at" => $this->created_at
         ];
+
+        return response()->json($data)->getOriginalContent();
     }
+    
 }

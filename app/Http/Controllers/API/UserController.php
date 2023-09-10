@@ -19,44 +19,56 @@ class UserController extends Controller
     public function index()
     {
 
-        $user = User::with(['role','nationality','qualification'])->get();
+        $user = User::with([
+            'role' => function ($query) {
+                $query->select('id', 'roleName');
+            },
+            'nationality' => function($query){
+                $query->select('id','nationalite');
+            },
+            'qualification' => function($query){
+                $query->select('id', 'name');
+            },
+            'workplaces'=> function($query){
+                $query->select('idUnit','name');
+            }
+        ])->get();
 
-       return UserResource::collection($user);
-       //return response()->json(['users'=>$user]);
-        
+
+        //return UserResource::collection($user);
+        return response()->json($user);
     }
 
-    public function login(Request $request){
+    public function login(Request $request)
+    {
 
         if (!UserValidator::loginValidate($request->all())) {
             return response()->json([
                 'status' => false,
                 'message' => "Données invalides",
-                'required' => $request
+                // 'required' => $request
             ], 400);
         }
 
         $user = User::where('registrationNumber', $request->registrationNumber)->first();
 
-        if(!$user || !password_verify($request->password, $user->password)) return response()->json(['message'=>'Authentification a échouée'],404);
+        if (!$user || !password_verify($request->password, $user->password)) return response()->json(['message' => 'Authentification a échouée'], 404);
 
         $token = $user->createToken('jobplan-auth-token')->plainTextToken;
         $userWithRole = $user->load('role:roleName');
         $response = [
-            'token'=> $token,
-            'user' => $user->load('role')->only(['id','name','fisrtName','role']),
+            'token' => $token,
+            'user' => $user->load(['role','qualification'])->only(['id', 'name', 'fisrtName', 'role', 'qualification']),
+            'status' => 201
         ];
-        return response()->json([
-            $response
-        ]);
-
+        return response()->json($response);
     }
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        
+
         if (!UserValidator::validate($request->all())) {
             return response()->json([
                 'status' => false,
@@ -82,8 +94,8 @@ class UserController extends Controller
 
         return response()->json([
             'status' => true,
-                'message' => "Crée",
-                'users' => $user
+            'message' => "Crée",
+            'users' => $user
         ], 201);
     }
 
@@ -94,17 +106,16 @@ class UserController extends Controller
 
         $user = User::find($id);
 
-        if(!$user) return response()->json([
+        if (!$user) return response()->json([
             'status' => false,
-            'message' => 'L\'utilisateur '.strval($id).' n\'existe pas'
-        ],404);
+            'message' => 'L\'utilisateur ' . strval($id) . ' n\'existe pas'
+        ], 404);
 
         return  new UserResource($user);
-     
     }
 
-    
-   
+
+
     public function update(Request $request, User $user)
     {
         //
@@ -120,15 +131,17 @@ class UserController extends Controller
 }
 
 
-class UserValidator {
-    public static function validate(array $data) {
+class UserValidator
+{
+    public static function validate(array $data)
+    {
         $rules = [
             "name" => 'required|max:100',
             "birthDate" => 'required|date',
             "registrationNumber" => 'required|unique:users',
             "password" => 'required|min:8',
             "recruitmentDate" => 'required|date',
-            "birthPlace" =>'required',
+            "birthPlace" => 'required',
             "sex" => 'required|in:M,F',
             "role" => 'required',
             "nationality" => 'required',
@@ -138,7 +151,8 @@ class UserValidator {
         return $validator->passes();
     }
 
-    public static function loginValidate(array $data){
+    public static function loginValidate(array $data)
+    {
         $rules = [
             "registrationNumber" => 'required',
             "password" => 'required|min:8',
